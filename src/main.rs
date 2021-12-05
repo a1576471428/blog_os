@@ -3,25 +3,21 @@
 
 use core::panic::PanicInfo;
 
+mod vga_buffer;
+
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    print("Hello World!");
+    for _i in 0..25 {
+        println!("hello world!")
+    }
+
+    panic!("test");
+
     loop {}
 }
 
 #[panic_handler]
-fn panic(_info: &PanicInfo) -> ! {
+fn panic(info: &PanicInfo) -> ! {
+    println!("{}", info);
     loop {}
-}
-
-fn print(str: &str) {
-    let vga_buffer_start = 0xb8000 as *mut u8;
-    for (index, byte) in str.as_bytes().iter().enumerate() {
-        unsafe {
-            // content
-            *vga_buffer_start.offset(index as isize * 2) = *byte;
-            // color
-            *vga_buffer_start.offset(index as isize * 2 + 1) = 0xb;
-        }
-    }
 }
